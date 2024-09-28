@@ -1,0 +1,62 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Complaint Form</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 20px;
+      background-color: #f0f4f8; display: flex; justify-content: space-evenly;
+      align-items: center; height: 100vh; } form { background-color: #ffffff;
+      padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0,
+      0.1); max-width: 400px; width: 100%; } h2 { text-align: center; color:
+      #66afe9; margin-bottom: 20px; } label { font-weight: bold; color: #333;
+      margin-bottom: 5px; display: block; } input, select, textarea { width:
+      100%; padding: 10px; margin-bottom: 15px; border: 1px solid #66afe9;
+      border-radius: 5px; box-sizing: border-box; font-size: 14px; transition:
+      border-color 0.3s ease, box-shadow 0.3s ease; text-transform: capitalize;
+      } input:focus, select:focus, textarea:focus { border-color: #008cff;
+      box-shadow: 0 0 5px #008cff; outline-color: #fff; } textarea { height:
+      100px; resize: vertical; } input[type="submit"] { background-color:
+      #7cb2de; color: white; border: none; padding: 12px; cursor: pointer;
+      font-weight: bold; font-size: 16px; border-radius: 5px; transition:
+      background-color 0.3s ease; } input[type="submit"]:hover {
+      background-color: #7cb2de; }
+    </style>
+  </head>
+
+  <body>
+    <h2>Student Complaint Form</h2>
+    <form action="/submit-student-complaint" method="post">
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="student-id">Student ID:</label>
+      <input type="text" id="student-id" name="student-id" required />
+
+      <label for="issue-type">Type of Issue:</label>
+      <select id="issue-type" name="issue-type" required>
+        <option value="">-- Select Issue --</option>
+        <option value="Computer Malfunction">Computer Malfunction</option>
+        <option value="Wi-Fi Connectivity">Wi-Fi Connectivity</option>
+        <option value="Software Installation">Software Installation</option>
+        <option value="Hardware Issues">Hardware Issues</option>
+        <option value="Network Problems">Network Problems</option>
+        <option value="Access to Online Resources">Access to Online Resources</option>
+        <option value="Printing Issues">Printing Issues</option>
+        <option value="Account Access">Account Access</option>
+      </select>
+
+      <label for="location">Location of Issue:</label>
+      <input type="text" id="location" name="location" required />
+
+      <label for="description">Description of the Issue:</label>
+      <textarea id="description" name="description" required></textarea>
+
+      <input type="submit" value="Submit Complaint" />
+    </form>
+  </body>
+
+</html>

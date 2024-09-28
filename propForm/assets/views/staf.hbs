@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Complaint Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 500px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background-color: #e0f7fa;
+        }
+        h2 {
+            color: #00796b;
+            text-align: center;
+        }
+        label {
+            margin: 10px 0 5px;
+            display: block;
+            color: #00695c;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #00796b;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #004d40;
+        }
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Faculty Complaint Form</h2>
+
+<form action="/submit-faculty-complaint" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="faculty-id">Faculty ID:</label>
+    <input type="text" id="faculty-id" name="faculty-id" required>
+    
+    <label for="issue-type">Type of Issue:</label>
+    <select id="issue-type" name="issue-type" required>
+        <option value="">-- Select Issue --</option>
+        <option value="Computer Malfunction">Computer Malfunction</option>
+        <option value="Wi-Fi Connectivity">Wi-Fi Connectivity</option>
+        <option value="Software Installation">Software Installation</option>
+        <option value="Hardware Issues">Hardware Issues</option>
+        <option value="Network Problems">Network Problems</option>
+        <option value="Access to Online Resources">Access to Online Resources</option>
+        <option value="Printing Issues">Printing Issues</option>
+        <option value="Account Access">Account Access</option>
+    </select>
+
+    <label for="location">Location of Issue:</label>
+    <input type="text" id="location" name="location" required>
+
+    <label for="description">Description of the Issue:</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <input type="submit" value="Submit Complaint">
+</form>
+
+</body>
+</html>

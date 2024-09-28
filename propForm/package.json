@@ -1,0 +1,29 @@
+{
+  "name": "form",
+  "version": "1.0.0",
+  "main": "./src/app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build":"npm i",
+    "start": "nodemon /src/app.js"
+  },
+  "author": "tiru",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "express-ws": "^5.0.2",
+    "hbs": "^4.2.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
