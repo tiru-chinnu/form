@@ -90,39 +90,41 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    var passes = initFile('secured.json')
-    req.session.userId = req.body.username
-    passes.forEach(elem => {
-        if (elem.username == req.body.username) {
-            if (req.body["password"] == elem["password"]) {
-                dataX.students = ''
-                dataX.faculty = ''
-                arr.forEach(e => {
-                    dataX.students += `<div class="card">
-        <div class="name">name : ${e["name"]}</div>
-        <div class="student-id">id : ${e["student-id"]}</div>
-        <div class="issue-type">issue : ${e["issue-type"]}</div>
-        <div class="location">location : ${e["location"]}</div>
-        <div class="description">description : ${e["description"]}</div>
-        </div>`
-                })
-                arr1.forEach(e => {
-                    dataX.faculty += `<div class="card">
-        <div class="name">name : ${e["name"]}</div>
-        <div class="faculty-id">id : ${e["faculty-id"]}</div>
-        <div class="issue-type">issue : ${e["issue-type"]}</div>
-        <div class="location">location : ${e["location"]}</div>
-        <div class="description">description : ${e["description"]}</div>
-        </div>`
-                })
-                dataX.username = `${req.body.username}`
-                res.render('admin', dataX)
-            } else {
-                res.redirect('/')
-                dataX.allow = false
-            }
-        }
-    })
+    const passes = initFile('secured.json')
+    const { username, password } = req.body
+    
+    const user = passes.find(u => u.username === username)
+
+    if (user && user.password === password) {
+        req.session.userId = username
+        dataX.students = ''
+        dataX.faculty = ''
+        
+        arr.forEach(e => {
+            dataX.students += `<div class="card">
+                <div class="name">name : ${e["name"]}</div>
+                <div class="student-id">id : ${e["student-id"]}</div>
+                <div class="issue-type">issue : ${e["issue-type"]}</div>
+                <div class="location">location : ${e["location"]}</div>
+                <div class="description">description : ${e["description"]}</div>
+            </div>`
+        })
+        
+        arr1.forEach(e => {
+            dataX.faculty += `<div class="card">
+                <div class="name">name : ${e["name"]}</div>
+                <div class="faculty-id">id : ${e["faculty-id"]}</div>
+                <div class="issue-type">issue : ${e["issue-type"]}</div>
+                <div class="location">location : ${e["location"]}</div>
+                <div class="description">description : ${e["description"]}</div>
+            </div>`
+        })
+        
+        dataX.username = username
+        return res.render('admin', dataX)
+    } else {
+        return res.redirect('/login')
+    }
 })
 
 app.get('/logout', (req, res) => {
