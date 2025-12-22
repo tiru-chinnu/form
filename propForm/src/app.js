@@ -93,6 +93,9 @@ app.post('/login', (req, res) => {
     const passes = initFile('secured.json')
     const { username, password } = req.body
     
+    arr = initFile('students.json')
+    arr1 = initFile('faculty.json')
+    
     const user = passes.find(u => u.username === username)
 
     if (user && user.password === password) {
