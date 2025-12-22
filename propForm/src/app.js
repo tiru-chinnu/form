@@ -2,7 +2,7 @@ import express from 'express'
 import hbs from 'hbs'
 import path from 'path'
 import bodyParser from 'body-parser'
-import fs, { readFileSync } from 'fs'
+import fs from 'fs'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import os from 'os'
@@ -13,11 +13,11 @@ const __dirname = path.dirname(__filename)
 const app = express()
 
 const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL || process.env.NOW_REGION
-const rootDir = isVercel ? path.join(__dirname, '..') : process.cwd()
+const rootDir = isVercel ? process.cwd() : process.cwd()
 
-const viewsPath = path.join(rootDir, 'assets', 'views')
-const partialPath = path.join(rootDir, 'assets', 'partials')
-const storageDir = isVercel ? '/tmp' : path.join(rootDir, 'tmp')
+const viewsPath = path.resolve(rootDir, 'assets/views')
+const partialPath = path.resolve(rootDir, 'assets/partials')
+const storageDir = isVercel ? '/tmp' : path.resolve(rootDir, 'tmp')
 
 if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true })
@@ -54,7 +54,7 @@ if (!isVercel) {
 }
 
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
-app.use(express.static(path.join(rootDir, 'public')))
+app.use(express.static(path.resolve(rootDir, 'public')))
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser("something"))
