@@ -1,24 +1,5 @@
-
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
-  ],
-  "routes":[
-    {
-      "src":"/",
-      "dest":"/"
-    },
-    {
-      "src":"/student",
-      "dest":"/student"
-    },
-    {
-      "src":"/faculty",
-      "dest":"/faculty"
-    },
-    {
-      "src":"/login",
-      "dest":"/login"
-    }
   ]
 }
