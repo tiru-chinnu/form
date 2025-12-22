@@ -6,12 +6,16 @@ import fs, { readFileSync } from 'fs'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import os from 'os'
+import { fileURLToPath } from 'url'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const dirName = process.cwd()
 const app = express()
-const viewsPath = path.join(dirName, 'assets/views')
-const isVercel = process.env.VERCEL || process.env.NODE_ENV === 'production'
-const storageDir = isVercel ? os.tmpdir() : path.join(dirName, 'tmp')
+
+const viewsPath = path.join(dirName, 'assets', 'views')
+const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL
+const storageDir = isVercel ? '/tmp' : path.join(dirName, 'tmp')
 
 if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true })
@@ -21,8 +25,14 @@ const getPath = (file) => path.join(storageDir, file)
 
 const initFile = (name, defaultValue = '[]') => {
     const p = getPath(name)
-    if (!fs.existsSync(p)) fs.writeFileSync(p, defaultValue, 'utf-8')
-    return JSON.parse(fs.readFileSync(p, 'utf-8'))
+    try {
+        if (!fs.existsSync(p)) {
+            fs.writeFileSync(p, defaultValue, 'utf-8')
+        }
+        return JSON.parse(fs.readFileSync(p, 'utf-8'))
+    } catch (e) {
+        return JSON.parse(defaultValue)
+    }
 }
 
 var arr = initFile('students.json'),
@@ -34,11 +44,13 @@ var arr = initFile('students.json'),
         allow: false
     },
     PORT = process.env.PORT || 3000,
-    partialPath = path.join(dirName, 'assets/partials')
+    partialPath = path.join(dirName, 'assets', 'partials')
 
-const appServer = app.listen(PORT, () => {
-    console.log(`running at http://localhost:${PORT}`)
-})
+if (!isVercel) {
+    app.listen(PORT, () => {
+        console.log(`running at http://localhost:${PORT}`)
+    })
+}
 
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
 app.use(express.static(path.join(dirName, 'public')))
@@ -148,3 +160,5 @@ app.get('*', (req, res) => {
         message: 'Oops! The page you are looking for does not exist.'
     })
 })
+
+export default app
