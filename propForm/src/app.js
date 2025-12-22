@@ -14,9 +14,9 @@ const app = express()
 
 const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL || process.env.NOW_REGION
 
-const viewsPath = path.join(process.cwd(), 'assets/views')
-const partialPath = path.join(process.cwd(), 'assets/partials')
-const storageDir = isVercel ? '/tmp' : path.join(process.cwd(), 'tmp')
+const viewsPath = path.resolve(__dirname, '../assets/views')
+const partialPath = path.resolve(__dirname, '../assets/partials')
+const storageDir = isVercel ? '/tmp' : path.resolve(__dirname, '../tmp')
 
 if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true })
@@ -57,7 +57,7 @@ if (!isVercel) {
 }
 
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
-app.use(express.static(path.join(process.cwd(), 'public')))
+app.use(express.static(path.resolve(__dirname, '../public')))
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser("something"))
