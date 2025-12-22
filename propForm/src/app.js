@@ -10,12 +10,14 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const dirName = process.cwd()
 const app = express()
 
-const viewsPath = path.join(dirName, 'assets', 'views')
-const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL
-const storageDir = isVercel ? '/tmp' : path.join(dirName, 'tmp')
+const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL || process.env.NOW_REGION
+const rootDir = isVercel ? path.join(__dirname, '..') : process.cwd()
+
+const viewsPath = path.join(rootDir, 'assets', 'views')
+const partialPath = path.join(rootDir, 'assets', 'partials')
+const storageDir = isVercel ? '/tmp' : path.join(rootDir, 'tmp')
 
 if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true })
@@ -43,8 +45,7 @@ var arr = initFile('students.json'),
         faculty: '',
         allow: false
     },
-    PORT = process.env.PORT || 3000,
-    partialPath = path.join(dirName, 'assets', 'partials')
+    PORT = process.env.PORT || 3000
 
 if (!isVercel) {
     app.listen(PORT, () => {
@@ -53,7 +54,7 @@ if (!isVercel) {
 }
 
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
-app.use(express.static(path.join(dirName, 'public')))
+app.use(express.static(path.join(rootDir, 'public')))
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser("something"))
