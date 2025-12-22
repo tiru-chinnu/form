@@ -5,20 +5,41 @@ import bodyParser from 'body-parser'
 import fs, { readFileSync } from 'fs'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
-const dirName = path.resolve(), app = express(), viewsPath = path.join(dirName, 'assets/views')
-var arr = JSON.parse(fs.readFileSync(path.join(dirName, '/tmp/students.json'), 'utf-8')),
-    arr1 = JSON.parse(fs.readFileSync(path.join(dirName, '/tmp/faculty.json'), 'utf-8')),
+import os from 'os'
+
+const dirName = process.cwd()
+const app = express()
+const viewsPath = path.join(dirName, 'assets/views')
+const isVercel = process.env.VERCEL || process.env.NODE_ENV === 'production'
+const storageDir = isVercel ? os.tmpdir() : path.join(dirName, 'tmp')
+
+if (!fs.existsSync(storageDir)) {
+    fs.mkdirSync(storageDir, { recursive: true })
+}
+
+const getPath = (file) => path.join(storageDir, file)
+
+const initFile = (name, defaultValue = '[]') => {
+    const p = getPath(name)
+    if (!fs.existsSync(p)) fs.writeFileSync(p, defaultValue, 'utf-8')
+    return JSON.parse(fs.readFileSync(p, 'utf-8'))
+}
+
+var arr = initFile('students.json'),
+    arr1 = initFile('faculty.json'),
+    ipAddr = initFile('trusted.json'),
     dataX = {
         students: '',
         faculty: '',
         allow: false
     },
     PORT = process.env.PORT || 3000,
-    partialPath = path.join(dirName, 'assets/partials'),
-    ipAddr = JSON.parse(readFileSync(path.join(dirName, '/tmp/trusted.json'), 'utf-8')),
-    appServer = app.listen(PORT, () => {
-        console.log(`running at http://localhost:${PORT}`)
-    })
+    partialPath = path.join(dirName, 'assets/partials')
+
+const appServer = app.listen(PORT, () => {
+    console.log(`running at http://localhost:${PORT}`)
+})
+
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
 app.use(express.static(path.join(dirName, 'public')))
 app.use(express.json())
@@ -36,25 +57,27 @@ app.use(session({
 app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 app.set('trust proxy', true)
-app.get('/', (req, res) => {
-    if (!req.session.views)
-        req.session.views = 1
-    else
-        req.session.views++
 
+app.get('/', (req, res) => {
+    if (!req.session.views) req.session.views = 1
+    else req.session.views++
     res.render('index', { views: req.session.views })
 })
+
 app.get('/students', (req, res) => {
     res.render('students')
 })
+
 app.get('/faculty', (req, res) => {
     res.render('faculty')
 })
+
 app.get('/login', (req, res) => {
     res.render('login')
 })
+
 app.post('/login', (req, res) => {
-    var passes = JSON.parse(fs.readFileSync(path.join(dirName, '/tmp/secured.json'), 'utf-8'))
+    var passes = initFile('secured.json')
     req.session.userId = req.body.username
     passes.forEach(elem => {
         if (elem.username == req.body.username) {
@@ -68,8 +91,7 @@ app.post('/login', (req, res) => {
         <div class="issue-type">issue : ${e["issue-type"]}</div>
         <div class="location">location : ${e["location"]}</div>
         <div class="description">description : ${e["description"]}</div>
-        </div>
-        `
+        </div>`
                 })
                 arr1.forEach(e => {
                     dataX.faculty += `<div class="card">
@@ -78,8 +100,7 @@ app.post('/login', (req, res) => {
         <div class="issue-type">issue : ${e["issue-type"]}</div>
         <div class="location">location : ${e["location"]}</div>
         <div class="description">description : ${e["description"]}</div>
-        </div>
-        `
+        </div>`
                 })
                 dataX.username = `${req.body.username}`
                 res.render('admin', dataX)
@@ -90,47 +111,38 @@ app.post('/login', (req, res) => {
         }
     })
 })
+
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
-        if (err)
-            res.send('failed to logout')
-        else
-            res.redirect('/')
+        if (err) res.send('failed to logout')
+        else res.redirect('/')
     })
 })
+
 app.post('/submit-student-complaint', (req, res) => {
     arr.push(req.body)
-    fs.writeFile(path.join(dirName, '/data/students.json'), JSON.stringify(arr), 'utf-8', (err) => {
-        if (err) {
-            res.render('error', {
-                message: 'failed to submit'
-            })
-        }
-        else {
-            res.render('submitted')
-        }
+    fs.writeFile(getPath('students.json'), JSON.stringify(arr), 'utf-8', (err) => {
+        if (err) res.render('error', { message: 'failed to submit' })
+        else res.render('submitted')
     })
-
 })
+
 app.post('/submit-faculty-complaint', (req, res) => {
     arr1.push(req.body)
-    fs.writeFile(path.join(dirName, '/data/faculty.json'), JSON.stringify(arr1), 'utf-8', (err) => {
-        if (err) {
-            res.render('error', {
-                message: 'failed to submit'
-            })
-        }
-        else {
-            res.render('submitted')
-        }
+    fs.writeFile(getPath('faculty.json'), JSON.stringify(arr1), 'utf-8', (err) => {
+        if (err) res.render('error', { message: 'failed to submit' })
+        else res.render('submitted')
     })
 })
+
 app.get('/data', (req, res) => {
     res.render('dot')
 })
+
 app.get('/chat', (req, res) => {
     res.render('chat')
 })
+
 app.get('*', (req, res) => {
     res.render('error', {
         message: 'Oops! The page you are looking for does not exist.'
