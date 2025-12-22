@@ -169,4 +169,4 @@ app.get('*', (req, res) => {
     })
 })
 
-export default ap
+export default app
