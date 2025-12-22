@@ -14,9 +14,9 @@ const app = express()
 
 const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL || process.env.NOW_REGION
 
-const viewsPath = path.join(__dirname, '../assets/views')
-const partialPath = path.join(__dirname, '../assets/partials')
-const storageDir = isVercel ? '/tmp' : path.join(__dirname, '../tmp')
+const viewsPath = path.join(process.cwd(), 'assets/views')
+const partialPath = path.join(process.cwd(), 'assets/partials')
+const storageDir = isVercel ? '/tmp' : path.join(process.cwd(), 'tmp')
 
 if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true })
@@ -36,9 +36,13 @@ const initFile = (name, defaultValue = '[]') => {
     }
 }
 
+const defaultUsers = [
+    { username: "user0212", password: "123@asist" },
+    { username: "tiru_0212", password: "Arjun143@" }
+]
+
 var arr = initFile('students.json'),
     arr1 = initFile('faculty.json'),
-    ipAddr = initFile('trusted.json'),
     dataX = {
         students: '',
         faculty: '',
@@ -53,7 +57,7 @@ if (!isVercel) {
 }
 
 hbs.registerPartials(partialPath, err => console.log((err) ? err : ''))
-app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(process.cwd(), 'public')))
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser("something"))
@@ -89,15 +93,14 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    const passes = initFile('secured.json')
     const { username, password } = req.body
     
     arr = initFile('students.json')
     arr1 = initFile('faculty.json')
     
-    const user = passes.find(u => u.username === username)
+    const user = defaultUsers.find(u => u.username === username && u.password === password)
 
-    if (user && user.password === password) {
+    if (user) {
         req.session.userId = username
         dataX.students = ''
         dataX.faculty = ''
